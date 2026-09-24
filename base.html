@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Image Steganography{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="topnav">
+  <div class="inner">
+    <a class="brand" href="{{ url_for('steganography.index') }}">
+      Harshita Sharma
+      <span class="brand-sub">Image Steganography</span>
+    </a>
+  </div>
+</div>
+<div class="wrap">
+  {% block content %}{% endblock %}
+  <footer class="site-footer">
+    <span>Built by <strong>Harshita Sharma</strong></span>
+    <span class="dot">&middot;</span>
+    <a href="https://github.com/harshitasharma3629-wq" target="_blank" rel="noopener">GitHub</a>
+    <span class="dot">&middot;</span>
+    <a href="https://www.linkedin.com/in/harshita-sharma-b3bba13ab" target="_blank" rel="noopener">LinkedIn</a>
+  </footer>
+</div>
+</body>
+</html>

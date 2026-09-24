@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Image Steganography{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div class="project-eyebrow">
+    <span class="bot bot-rose" aria-hidden="true">{% include "partials/robot.svg" %}</span>
+    Image Steganography &middot; by Harshita Sharma
+  </div>
+  <h1>Image Steganography</h1>
+  <p>Hide a text message inside an image using the Least Significant Bit (LSB) technique, or decode a message from an already-encoded image.</p>
+</header>
+
+<nav class="tabs">
+  <a id="tab-encode" class="{{ 'active' if not show_decode else '' }}" onclick="showPanel('encode')">Encode</a>
+  <a id="tab-decode" class="{{ 'active' if show_decode else '' }}" onclick="showPanel('decode')">Decode</a>
+</nav>
+
+<section id="panel-encode" class="panel {{ 'active' if not show_decode else '' }}">
+  {% if encode_error %}<div class="error">{{ encode_error }}</div>{% endif %}
+  <form method="POST" action="{{ url_for('steganography.encode') }}" enctype="multipart/form-data">
+    <div class="field-row">
+      <label for="image">Cover image (PNG recommended)</label>
+      <input type="file" id="image" name="image" accept="image/*" required>
+    </div>
+    <div class="field-row">
+      <label for="message">Secret message</label>
+      <textarea id="message" name="message" rows="3" placeholder="Type the message to hide inside the image..."></textarea>
+    </div>
+    <button type="submit">Hide message in image</button>
+  </form>
+
+  {% if encoded_filename %}
+  <div class="result">
+    <div class="success">Message hidden successfully. The two images below look identical to the eye.</div>
+    <div class="img-compare">
+      <figure>
+        <img src="{{ url_for('steganography.uploaded_file', filename=original_filename) }}" alt="Original image">
+        <figcaption>Original</figcaption>
+      </figure>
+      <figure>
+        <img src="{{ url_for('steganography.uploaded_file', filename=encoded_filename) }}" alt="Encoded image">
+        <figcaption>Encoded (message hidden inside)</figcaption>
+      </figure>
+    </div>
+    <p class="sans" style="margin-top:14px;">
+      <a class="btn" href="{{ url_for('steganography.uploaded_file', filename=encoded_filename) }}" download>Download encoded image</a>
+    </p>
+  </div>
+  {% endif %}
+</section>
+
+<section id="panel-decode" class="panel {{ 'active' if show_decode else '' }}">
+  {% if decode_error %}<div class="error">{{ decode_error }}</div>{% endif %}
+  <form method="POST" action="{{ url_for('steganography.decode') }}" enctype="multipart/form-data">
+    <div class="field-row">
+      <label for="decode_image">Encoded image</label>
+      <input type="file" id="decode_image" name="image" accept="image/*" required>
+    </div>
+    <button type="submit">Extract hidden message</button>
+  </form>
+
+  {% if hidden_message %}
+  <div class="result">
+    <div class="kw-block">
+      <h3>Hidden message found</h3>
+      <p class="sans" style="font-size:1.05rem;">{{ hidden_message }}</p>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+<script>
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav.tabs a').forEach(a => a.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+</script>
+{% endblock %}
